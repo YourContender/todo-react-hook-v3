@@ -13,6 +13,8 @@ const FormAddTask = ({ addTask }) => {
         }
 
         addTask(currentTask);
+        setTitle('');
+        setDescription('');
     }
 
     return (
