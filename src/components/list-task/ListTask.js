@@ -1,25 +1,12 @@
 import { useEffect, useState } from "react";
 import FormAddTask from "./forms-add-task/FormAddTask";
 import { API_DEL_URL, API_GET_URL, API_POST_URL, API_PUT_URL } from "../../config";
-import Task from "./Task";
+import Task from "./task/Task";
 import Error from "../error/Error";
 
-function ListTask() {
+function ListTask({ add }) {
     const [state, setState] = useState([]);
     const [error, setError] = useState(undefined);
-     
-    // useEffect(() => {
-    //     fetch(API_GET_URL)
-    //         .then((response) => {
-    //             if (!response.ok) {
-    //                 setError(true)
-    //                 throw new Error('hello world!')
-    //             }
-
-    //             return response.json()
-    //         })
-    //         .then(data => setState(data))
-    // }, [])
 
     useEffect( async () => {
         const res = await fetch(API_GET_URL);
@@ -112,8 +99,14 @@ function ListTask() {
 
     return (
         <div>
+            {add ? 
+                <FormAddTask error={error} addTask={addNewTask}/> : 
+                <div>
+                    <span>click on "Add new task" and enter your task</span>
+                    <h4>List tasks: </h4>
+                </div>
+            }
             {error && <Error setError={setError} error={error}/>}
-            <FormAddTask addTask={addNewTask}/>
             {!error && 
                 <ul>
                     {

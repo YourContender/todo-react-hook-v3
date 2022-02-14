@@ -1,0 +1,18 @@
+.btn {
+    margin-bottom: 50px;
+}
+.input {
+    box-shadow: 2px 2px 3px 0 red;
+    border: 2px solid red;
+}
+
+.error {
+    margin-top: 10px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.child {
+
+}

@@ -1,0 +1,33 @@
+.list {
+    list-style-type: none;
+    margin-left: -30px;
+}
+
+.task {
+    margin-top: 5px;
+    height: 120px;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid rgba(156, 155, 155, 0.767);
+    border-radius: 5px;
+}
+
+.btn {
+    margin-right: 20px;
+}
+
+.btn_link {
+    margin-left: 5px;
+}
+
+.title {
+    margin-left: 15px;
+    color: rgba(48, 47, 47, 0.822);
+}
+
+.descr {
+    margin-left: 15px;
+    color: rgba(48, 47, 47, 0.822);
+}
