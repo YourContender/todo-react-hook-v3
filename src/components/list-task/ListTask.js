@@ -7,6 +7,8 @@ import Error from "../error/Error";
 function ListTask({ add }) {
     const [state, setState] = useState([]);
     const [error, setError] = useState(undefined);
+    const [editError, setEditError] = useState(undefined);
+    const [success, setSuccess] = useState(false);
 
     useEffect( async () => {
         const res = await fetch(API_GET_URL);
@@ -27,12 +29,12 @@ function ListTask({ add }) {
             });
 
             const body = await res.json();
-            console.log(body)
+            console.log(res)
 
             if (res.status === 422) {
                 setError(body.errors)
             } else if (res.status === 201) {
-                setState([...state, body])
+                setState([body, ...state])
             } else {
                 setError([res.status, res.statusText])
             }
@@ -89,18 +91,19 @@ function ListTask({ add }) {
         const body = await res.json();
         
         if (res.status === 422) {
-            setError(body.errors)
+            setEditError(body.errors)
         } else if (res.status === 200) {
             setState(filtered)
+            setSuccess(true)
         } else {
-            setError([res.status, res.statusText])
+            setEditError([res.status, res.statusText])
         }
     }
 
     return (
         <div>
             {add ? 
-                <FormAddTask error={error} addTask={addNewTask}/> : 
+                <FormAddTask error={error} setError={setError} addTask={addNewTask}/> : 
                 <div>
                     <span>click on "Add new task" and enter your task</span>
                     <h4>List tasks: </h4>
@@ -119,6 +122,10 @@ function ListTask({ add }) {
                                     description={item.description}
                                     removeTask={removeTask}
                                     editTask={editTask}
+                                    editError={editError}
+                                    setEditError={setEditError}
+                                    success={success}
+                                    setSuccess={setSuccess}
                                 />
                             )
                         })

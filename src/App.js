@@ -9,7 +9,7 @@ function App() {
 
     return (
         <div className={s.container}>
-            <Header add={add} setAdd={setAdd}/>
+            <Header add={add} setAdd={setAdd} />
             <ListTask add={add}/>
             <Footer/>
         </div>

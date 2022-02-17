@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import s from './FormAddTask.module.css';
 
-const FormAddTask = ({ addTask, error }) => {
+const FormAddTask = ({ addTask, error, setError }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     
@@ -31,7 +31,14 @@ const FormAddTask = ({ addTask, error }) => {
             <Form>
                 <Form.Group className="mb-3 mt-3">
                     <Form.Label>Enter title</Form.Label>
-                    <Form.Control className={classTitle} onChange={(e) => setTitle(e.target.value)} value={title} type="text" placeholder="введите заголовок" />
+                    <Form.Control 
+                        type="text" 
+                        placeholder="введите заголовок" 
+                        onClick={() => setError(undefined)} 
+                        className={classTitle} 
+                        onChange={(e) => setTitle(e.target.value)} 
+                        value={title} 
+                    />
 
                     {error ? error.title ? <Alert className={s.error} variant="danger">
                         <span>{error.title}</span>
@@ -40,7 +47,16 @@ const FormAddTask = ({ addTask, error }) => {
                 </Form.Group>
                 <Form.Group className="mb-2">
                     <Form.Label>Enter description</Form.Label>
-                    <Form.Control className={classDescr} onChange={(e) => setDescription(e.target.value)} value={description} name='description' as="textarea" rows={2} placeholder="введите описание"/>
+                    <Form.Control 
+                        onClick={() => setError(undefined)} 
+                        className={classDescr} 
+                        onChange={(e) => setDescription(e.target.value)} 
+                        value={description} 
+                        name='description' 
+                        as="textarea" 
+                        rows={2} 
+                        placeholder="введите описание"
+                    />
                    
                     {error ? error.description ? <Alert className={s.error} variant="danger">
                          <span>{error.description}</span> 
