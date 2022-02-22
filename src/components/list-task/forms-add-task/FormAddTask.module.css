@@ -1,5 +1,6 @@
 .btn {
     margin-bottom: 50px;
+    margin-left: 5px;
 }
 .input {
     box-shadow: 2px 2px 3px 0 red;
@@ -13,3 +14,10 @@
     align-items: center;
 }
 
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -20px;
+    margin-bottom: 30px;
+}

@@ -1,26 +1,29 @@
-import { useState } from "react";
-import { Button } from "react-bootstrap";
-import EditModalTask from "../edit-task/EditModalTask";
-import s from './Task.module.css';
+import { useState }        from "react";
+import { Button }          from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import EditModalTask       from "../edit-task/EditModalTask";
+import s                   from './Task.module.css';
 
-const Task = ({ title, description, id, removeTask, editTask, editError, setEditError, success, setSuccess }) => {
-    const [edit, setEdit] = useState(false);
+
+const Task = ({ removeTask, editTask, editError, setEditError, successTaskChange, setSuccessTaskChange, item, state, taskDataChange }) => {
+    const [showEditModal, setShowEditModal] = useState(false);
 
     return (
         <li className={s.list}>
             {
-                edit ? 
+                showEditModal ? 
                     <div>   
                         <EditModalTask 
+                            item={item}
                             editTask={editTask} 
-                            setEdit={setEdit} 
-                            id={id} 
-                            title={title} 
-                            description={description}
+                            setShowEditModal={setShowEditModal} 
                             editError={editError}
                             setEditError={setEditError}
-                            success={success}
-                            setSuccess={setSuccess}
+                            successTaskChange={successTaskChange}
+                            setSuccessTaskChange={setSuccessTaskChange}
+                            taskDataChange={taskDataChange}
+                            state={state}
                         />
                     </div>
                 : 
@@ -28,16 +31,28 @@ const Task = ({ title, description, id, removeTask, editTask, editError, setEdit
                     <div className={s.task}>
                         <div>
                             <h1 className={s.title}>
-                                {title.length > 20 ? title.slice(0, 20) + '...' : title} 
+                                {item.title.length > 20 ? item.title.slice(0, 20) + '...' : item.title} 
                             </h1>
                             <span className={s.descr}>
-                                {description.length > 40 ? description.slice(0, 40) + '...' : description}
+                                {item.description.length > 40 ? item.description.slice(0, 40) + '...' : item.description}
                             </span>
                         </div>
 
                         <div className={s.btn}>
-                            <Button onClick={() => removeTask(id)} variant="danger">delete</Button>
-                            <Button className={s.btn_link} onClick={() => setEdit(true)} variant="secondary">edit</Button>
+                            <Button 
+                                onClick={() => removeTask(item.id)} 
+                                variant="danger"
+                            >
+                                <FontAwesomeIcon icon={faTrash}/>
+                            </Button>
+                            
+                            <Button 
+                                className={s.btn_link} 
+                                onClick={() => setShowEditModal(true)} 
+                                variant="secondary"
+                            >
+                                <FontAwesomeIcon icon={faEdit}/>
+                            </Button>
                         </div>
                     </div>
                 </div>

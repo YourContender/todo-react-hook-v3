@@ -5,12 +5,12 @@ import { useState } from "react";
 import s from './App.module.css';
 
 function App() {
-    const [add, setAdd] = useState(false);
+    const [showFormPanel, setShowFormPanel] = useState(false);
 
     return (
         <div className={s.container}>
-            <Header add={add} setAdd={setAdd} />
-            <ListTask add={add}/>
+            <Header showFormPanel={showFormPanel} setShowFormPanel={setShowFormPanel} />
+            <ListTask showFormPanel={showFormPanel}/>
             <Footer/>
         </div>
     )

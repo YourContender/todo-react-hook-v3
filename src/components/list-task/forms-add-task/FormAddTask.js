@@ -1,29 +1,64 @@
-import { useState } from "react";
+import { useState }            from "react";
 import { Alert, Button, Form } from "react-bootstrap";
-import s from './FormAddTask.module.css';
+import { API_POST_URL }        from "../../../config";
+import s                       from './FormAddTask.module.css';
+import preloader               from '../../spinner/spinner.gif';
 
-const FormAddTask = ({ addTask, error, setError }) => {
+const FormAddTask = ({ state, setState, errorValidation, setErrorValidation }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    
+    const [loadingTask, setLoadingTask] = useState(false);
+
     let classTitle = null;
     let classDescr = null;
 
-    if (error) {
-        classTitle = error.title ? classTitle = s.input : null
-        classDescr = error.description ? classDescr = s.input : null
+    if (errorValidation) {
+        classTitle = errorValidation.title ? classTitle = s.input : null
+        classDescr = errorValidation.description ? classDescr = s.input : null
     }
 
-    const createNewTask = () => {
-        const currentTask = {
-            title,
-            description,
-            status: 1
-        }
-
-        addTask(currentTask);
+    const cancelAddNewTask = () => {
         setTitle('');
         setDescription('');
+        setErrorValidation(null);
+    } 
+
+    const addNewTask = async () => {      
+        setLoadingTask(true);
+
+        try {
+            const res = await fetch(API_POST_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    title,
+                    description,
+                    status: 1
+                }),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const body = await res.json();
+
+            if (res.status === 422) {
+                setErrorValidation(body.errors);
+                setLoadingTask(false);
+            } else if (res.status === 201) {
+                setState([body, ...state]);
+                setTitle('');
+                setDescription('');
+                setLoadingTask(false);
+                setErrorValidation(null);
+            } else {
+                setErrorValidation([res.status, res.statusText]);
+                setLoadingTask(false);
+            }
+
+        } catch(err) {
+            console.log('hello hello', err);
+        }
     }
 
     return (
@@ -34,21 +69,24 @@ const FormAddTask = ({ addTask, error, setError }) => {
                     <Form.Control 
                         type="text" 
                         placeholder="введите заголовок" 
-                        onClick={() => setError(undefined)} 
                         className={classTitle} 
                         onChange={(e) => setTitle(e.target.value)} 
                         value={title} 
                     />
 
-                    {error ? error.title ? <Alert className={s.error} variant="danger">
-                        <span>{error.title}</span>
-                    </Alert> : null : null}
+                    {
+                        errorValidation && 
+                            errorValidation.title ? 
+                                <Alert className={s.error} variant="danger">
+                                    <span>{errorValidation.title}</span>
+                                </Alert> 
+                            : null 
+                    }
 
                 </Form.Group>
                 <Form.Group className="mb-2">
                     <Form.Label>Enter description</Form.Label>
                     <Form.Control 
-                        onClick={() => setError(undefined)} 
                         className={classDescr} 
                         onChange={(e) => setDescription(e.target.value)} 
                         value={description} 
@@ -58,13 +96,28 @@ const FormAddTask = ({ addTask, error, setError }) => {
                         placeholder="введите описание"
                     />
                    
-                    {error ? error.description ? <Alert className={s.error} variant="danger">
-                         <span>{error.description}</span> 
-                    </Alert> : null : null}
+                    {
+                        errorValidation && 
+                            errorValidation.description ? 
+                                <Alert className={s.error} variant="danger">
+                                    <span>{errorValidation.description}</span> 
+                                </Alert> 
+                            : null 
+                    }
 
                 </Form.Group>
             </Form>
-            <Button className={s.btn} onClick={() => createNewTask()} variant="primary">Добавить</Button>
+            <div>
+                <Button className={s.btn} onClick={() => addNewTask()} variant="primary">create</Button>
+                <Button className={s.btn} onClick={() => cancelAddNewTask()} variant="outline-secondary">cancel</Button>
+            </div>
+           
+            <div className={s.loading}>
+                {
+                    loadingTask && <img src={preloader} alt="preloader"/> 
+                }
+            </div>
+        
         </div>
     )
 }

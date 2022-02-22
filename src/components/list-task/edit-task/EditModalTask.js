@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useState }                   from 'react';
 import { Alert, Button, Form, Modal } from 'react-bootstrap';
-import s from './EditModalTask.module.css';
+import { FontAwesomeIcon }            from "@fortawesome/react-fontawesome";
+import { faSave, faSquareXmark }      from '@fortawesome/free-solid-svg-icons';
+import { API_PUT_URL }                from '../../../config';
+import preloader                      from '../../spinner/spinner.gif';
+import s                              from './EditModalTask.module.css';
 
-function EditModalTask({ editTask, setEdit, id, title, description, editError, setEditError, success, setSuccess }) {
-    const [editTitle, setEditTitle] = useState(title);
-    const [editDescr, setEditDescr] = useState(description);
+function EditModalTask({ state, item, setShowEditModal, editError, setEditError, successTaskChange, setSuccessTaskChange, taskDataChange }) {
+    const [editTitle, setEditTitle] = useState(item.title);
+    const [editDescr, setEditDescr] = useState(item.description);
+    const [loadingTask, setLoadingTask] = useState(false);
 
     let classTitle = null;
     let classDescr = null;
@@ -14,16 +19,59 @@ function EditModalTask({ editTask, setEdit, id, title, description, editError, s
         classDescr = editError.description ? classDescr = s.input : null
     } 
     
-    const saveTask = () => {
-        editTask(editTitle, editDescr, id);
-        setEditError(undefined);
-        setSuccess(false)
+    const editTask = async () => {
+        setLoadingTask(true);
+
+        let filtered = state.map(elem => {
+            if (elem.id === item.id) {
+                return {
+                    id: item.id,
+                    title: editTitle, 
+                    description: editDescr,
+                    status: 1
+                }
+            }
+            return elem
+        })
+    
+        let data = {
+            id: item.id,
+            title: editTitle, 
+            description: editDescr, 
+            status: 1
+        }
+    
+        const res = await fetch(API_PUT_URL + "/" + item.id, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            }
+        })
+
+        const body = await res.json();
+        
+        if (res.status === 422) {
+            setEditError(body.errors);
+            setLoadingTask(false);
+            setSuccessTaskChange(false);
+        } else if (res.status === 200) {
+            taskDataChange(filtered);
+            setEditError(null);
+            setSuccessTaskChange(true);
+            setLoadingTask(false);
+        } else {
+            setEditError([res.status, res.statusText]);
+            setLoadingTask(false);
+            setSuccessTaskChange(false);
+        }
     }
 
     const cancelEdit = () => {
-        setEdit(false);
+        setShowEditModal(false);
         setEditError(undefined);
-        setSuccess(false)
+        setSuccessTaskChange(false);
     }
 
     return (
@@ -40,15 +88,19 @@ function EditModalTask({ editTask, setEdit, id, title, description, editError, s
                             <Form.Control 
                                 type="text" 
                                 placeholder="введите заголовок" 
-                                defaultValue={title}
+                                defaultValue={item.title}
                                 className={classTitle}
-                                onClick={() => setEditError(undefined)}
                                 onChange={(e) => setEditTitle(e.target.value)}
                             />
 
-                            {editError ? editError.title ? <Alert className={s.error} variant="danger">
-                                <span>{editError.title}</span>
-                            </Alert> : null : null}
+                            {
+                                editError &&
+                                    editError.title ? 
+                                        <Alert className={s.error} variant="danger">
+                                            <span>{editError.title}</span>
+                                        </Alert> 
+                                    : null
+                            }
 
                         </Form.Group>
                         <Form.Group className="mb-2">
@@ -58,30 +110,47 @@ function EditModalTask({ editTask, setEdit, id, title, description, editError, s
                                 as="textarea" 
                                 rows={2} 
                                 placeholder="введите описание"
-                                defaultValue={description}
+                                defaultValue={item.description}
                                 className={classDescr}
-                                onClick={() => setEditError(undefined)}
                                 onChange={(e) => setEditDescr(e.target.value)}
                             />
 
-                            {editError ? editError.description ? <Alert className={s.error} variant="danger">
-                                <span>{editError.description}</span>
-                            </Alert> : null : null}
+                            {
+                                editError && 
+                                    editError.description ? 
+                                        <Alert className={s.error} variant="danger">
+                                            <span>{editError.description}</span>
+                                        </Alert> 
+                                    : null 
+                            }
 
                         </Form.Group>
 
-                        {Array.isArray(editError) ? <Alert className={s.error} variant="danger">
-                            <span>{editError[0] + ' : ' + editError[1]}</span>
-                        </Alert> : null}
+                        {
+                            Array.isArray(editError) && 
+                                <Alert className={s.error} variant="danger">
+                                    <span>{editError[0] + ' : ' + editError[1]}</span>
+                                </Alert> 
+                        }
 
-                        {success ? <Alert className={s.success} variant="info">
-                            <span>success</span>
-                        </Alert> : null}
+                        {
+                            successTaskChange && 
+                                <Alert className={s.success} variant="info">
+                                    <span>success</span>
+                                </Alert> 
+                        }
+
+                        <div className={s.loading}>
+                            {
+                                loadingTask && <img src={preloader} alt="preloader"/> 
+                            }
+                        </div>
+
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={() => cancelEdit()} variant="secondary">Close</Button>
-                    <Button onClick={() => saveTask()} variant="primary">edit</Button>
+                    <Button onClick={() => cancelEdit()} variant="secondary"><FontAwesomeIcon icon={faSquareXmark}/></Button>
+                    <Button onClick={() => editTask()} variant="primary"><FontAwesomeIcon icon={faSave}/></Button>
                 </Modal.Footer>
                 </Modal.Dialog>
             </div>
