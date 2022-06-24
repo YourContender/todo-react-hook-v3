@@ -53,7 +53,7 @@ function ListTask({ showFormPanel }) {
 
             {errorValidation && <Error error={setErrorValidation} setError={errorValidation}/>}
 
-            {!errorValidation && 
+            {/* {!errorValidation &&  */}
                 <ul>
                     {
                         state.map(item => {
@@ -73,7 +73,7 @@ function ListTask({ showFormPanel }) {
                         })
                     }
                 </ul>
-            }
+            {/* } */}
         </div>
     )
 }
