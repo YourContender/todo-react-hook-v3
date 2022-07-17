@@ -1,4 +1,4 @@
-export const API_GET_URL = 'http://167.71.41.212:8000/api/tasks/list';
-export const API_POST_URL = 'http://167.71.41.212:8000/api/tasks/add';
-export const API_DEL_URL  = 'http://167.71.41.212:8000/api/tasks/remove';
-export const API_PUT_URL  = 'http://167.71.41.212:8000/api/tasks/change';
+export const API_GET_URL = 'https://629fcf1a202ceef70860a4bd.mockapi.io/todos';
+export const API_POST_URL = 'https://629fcf1a202ceef70860a4bd.mockapi.io/todos';
+export const API_DEL_URL  = 'https://629fcf1a202ceef70860a4bd.mockapi.io/todos';
+export const API_PUT_URL  = 'https://629fcf1a202ceef70860a4bd.mockapi.io/todos';
