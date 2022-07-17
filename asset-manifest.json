@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/todo-react-hook-v3/static/css/main.c733e465.css",
+    "main.js": "/todo-react-hook-v3/static/js/main.e3c905a0.js",
+    "index.html": "/todo-react-hook-v3/index.html",
+    "main.c733e465.css.map": "/todo-react-hook-v3/static/css/main.c733e465.css.map",
+    "main.e3c905a0.js.map": "/todo-react-hook-v3/static/js/main.e3c905a0.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c733e465.css",
+    "static/js/main.e3c905a0.js"
+  ]
+}
