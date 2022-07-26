@@ -1,7 +1,7 @@
 import { useState }                   from 'react';
 import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon }            from "@fortawesome/react-fontawesome";
-        import { faSave, faSquareXmark }      from '@fortawesome/free-solid-svg-icons';
+import { faSave, faSquareXmark }      from '@fortawesome/free-solid-svg-icons';
 import { API_PUT_URL }                from '../../../config';
 import preloader                      from '../../spinner/spinner.gif';
 import s                              from './EditModalTask.module.css';
@@ -10,14 +10,23 @@ function EditModalTask({ state, item, setShowEditModal, editError, setEditError,
     const [editTitle, setEditTitle] = useState(item.title);
     const [editDescr, setEditDescr] = useState(item.description);
     const [loadingTask, setLoadingTask] = useState(false);
+    const [test, setTest] = useState(false);
 
     let classTitle = null;
     let classDescr = null;
 
-    if (editError) {
-        classTitle = editError.title ? classTitle = s.input : null
-        classDescr = editError.description ? classDescr = s.input : null
+    if (test) {
+        classTitle = test ? classTitle = s.input : null
+        classDescr = test ? classDescr = s.input : null
     } 
+
+    const editCurrentTask = () => {
+        if (editTitle.length < 4) {
+            return setTest(true);
+        } else {
+            return editTask()
+        }
+    }
     
     const editTask = async () => {
         setLoadingTask(true);
@@ -49,28 +58,18 @@ function EditModalTask({ state, item, setShowEditModal, editError, setEditError,
             'Content-Type': 'application/json'
             }
         })
-
-        const body = await res.json();
         
-        if (res.status === 422) {
-            setEditError(body.errors);
-            setLoadingTask(false);
-            setSuccessTaskChange(false);
-        } else if (res.status === 200) {
+        if (res.status === 200) {
             taskDataChange(filtered);
-            setEditError(null);
+            setTest(false);
             setSuccessTaskChange(true);
             setLoadingTask(false);
-        } else {
-            setEditError([res.status, res.statusText]);
-            setLoadingTask(false);
-            setSuccessTaskChange(false);
-        }
+        } 
     }
 
     const cancelEdit = () => {
         setShowEditModal(false);
-        setEditError(undefined);
+        setTest(false);
         setSuccessTaskChange(false);
     }
 
@@ -94,12 +93,11 @@ function EditModalTask({ state, item, setShowEditModal, editError, setEditError,
                             />
 
                             {
-                                editError &&
-                                    editError.title ? 
-                                        <Alert className={s.error} variant="danger">
-                                            <span>{editError.title}</span>
-                                        </Alert> 
-                                    : null
+                                test ? 
+                                    <Alert className={s.error} variant="danger">
+                                        <span>error</span>
+                                    </Alert> 
+                                : null
                             }
 
                         </Form.Group>
@@ -116,12 +114,11 @@ function EditModalTask({ state, item, setShowEditModal, editError, setEditError,
                             />
 
                             {
-                                editError && 
-                                    editError.description ? 
-                                        <Alert className={s.error} variant="danger">
-                                            <span>{editError.description}</span>
-                                        </Alert> 
-                                    : null 
+                                test ?
+                                    <Alert className={s.error} variant="danger">
+                                        <span>error</span>
+                                    </Alert> 
+                                : null 
                             }
 
                         </Form.Group>
@@ -150,7 +147,7 @@ function EditModalTask({ state, item, setShowEditModal, editError, setEditError,
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={() => cancelEdit()} variant="secondary"><FontAwesomeIcon icon={faSquareXmark}/></Button>
-                    <Button onClick={() => editTask()} variant="primary"><FontAwesomeIcon icon={faSave}/></Button>
+                    <Button onClick={() => editCurrentTask()} variant="primary"><FontAwesomeIcon icon={faSave}/></Button>
                 </Modal.Footer>
                 </Modal.Dialog>
             </div>
