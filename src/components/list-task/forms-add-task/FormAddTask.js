@@ -4,61 +4,61 @@ import { API_POST_URL }        from "../../../config";
 import s                       from './FormAddTask.module.css';
 import preloader               from '../../spinner/spinner.gif';
 
-const FormAddTask = ({ state, setState, errorValidation, setErrorValidation }) => {
+const FormAddTask = ({ state, setState, setErrorValidation }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [loadingTask, setLoadingTask] = useState(false);
+    const [test, setTest] = useState(false);
 
     let classTitle = null;
     let classDescr = null;
 
-    if (errorValidation) {
-        classTitle = errorValidation.title ? classTitle = s.input : null
-        classDescr = errorValidation.description ? classDescr = s.input : null
+    if (test) {
+        classTitle = test ? classTitle = s.input : null
+        classDescr = test ? classDescr = s.input : null
     }
 
     const cancelAddNewTask = () => {
         setTitle('');
         setDescription('');
-        setErrorValidation(null);
+        setErrorValidation(false);
+        setTest(false)
     } 
 
     const addNewTask = async () => {      
         setLoadingTask(true);
 
-        try {
-            const res = await fetch(API_POST_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    title,
-                    description,
-                    status: 1
-                }),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+        if (title.length < 4) {
+            setTest(true);
+            setLoadingTask(false);
+        } else {
+            try {
+                const res = await fetch(API_POST_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        title,
+                        description,
+                        status: 1
+                    }),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+    
+                const body = await res.json();
+    
+                if (res.status === 201) {
+                    setState([body, ...state]);
+                    setTitle('');
+                    setDescription('');  
+                    setLoadingTask(false);
+                    setErrorValidation(false); 
                 }
-            });
-
-            const body = await res.json();
-
-            if (res.status === 422) {
-                setErrorValidation(body.errors);
-                setLoadingTask(false);
-            } else if (res.status === 201) {
-                setState([body, ...state]);
-                setTitle('');
-                setDescription('');
-                setLoadingTask(false);
-                setErrorValidation(null);
-            } else {
-                setErrorValidation([res.status, res.statusText]);
-                setLoadingTask(false);
+            } catch(err) {
+                console.log('hello hello', err);
             }
-
-        } catch(err) {
-            console.log('hello hello', err);
-        }
+        }     
     }
 
     return (
@@ -75,12 +75,11 @@ const FormAddTask = ({ state, setState, errorValidation, setErrorValidation }) =
                     />
 
                     {
-                        errorValidation && 
-                            errorValidation.title ? 
-                                <Alert className={s.error} variant="danger">
-                                    <span>{errorValidation.title}</span>
-                                </Alert> 
-                            : null 
+                        test ? 
+                            <Alert className={s.error} variant="danger">
+                                <span>hello world</span>
+                            </Alert> 
+                        : null 
                     }
 
                 </Form.Group>
@@ -97,12 +96,11 @@ const FormAddTask = ({ state, setState, errorValidation, setErrorValidation }) =
                     />
                    
                     {
-                        errorValidation && 
-                            errorValidation.description ? 
-                                <Alert className={s.error} variant="danger">
-                                    <span>{errorValidation.description}</span> 
-                                </Alert> 
-                            : null 
+                        test ? 
+                            <Alert className={s.error} variant="danger">
+                                <span>hey hey</span> 
+                            </Alert> 
+                        : null 
                     }
 
                 </Form.Group>

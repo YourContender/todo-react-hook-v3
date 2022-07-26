@@ -7,7 +7,7 @@ import Error                        from "../error/Error";
 function ListTask({ showFormPanel }) {
     const [state, setState] = useState([]);
     const [editError, setEditError] = useState(null);
-    const [errorValidation, setErrorValidation] = useState(null);
+    const [errorValidation, setErrorValidation] = useState(false);
     const [successTaskChange, setSuccessTaskChange] = useState(false);
 
     useEffect( async () => {
@@ -24,9 +24,10 @@ function ListTask({ showFormPanel }) {
             method: 'DELETE'
         })
 
+        console.log('res status: ', res.status);
         if (res.status === 200) {
             setState(filtered);
-        } else {
+        } else { //404
             setErrorValidation([res.status, res.statusText, id]);
         }
     }
