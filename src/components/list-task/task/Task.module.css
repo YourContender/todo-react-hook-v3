@@ -31,3 +31,11 @@
     margin-left: 15px;
     color: rgba(48, 47, 47, 0.822);
 }
+
+.done {
+    background: rgb(40, 218, 114);
+}
+
+.important {
+    background: rgb(40, 97, 221);
+}

@@ -4,7 +4,7 @@ import { API_POST_URL }        from "../../../config";
 import s                       from './FormAddTask.module.css';
 import preloader               from '../../spinner/spinner.gif';
 
-const FormAddTask = ({ state, setState, setErrorValidation }) => {
+const FormAddTask = ({ unFinishedTask, setUnFinishedTask, setErrorValidation }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [loadingTask, setLoadingTask] = useState(false);
@@ -38,7 +38,9 @@ const FormAddTask = ({ state, setState, setErrorValidation }) => {
                     body: JSON.stringify({
                         title,
                         description,
-                        status: 1
+                        status: 1,
+                        done: false,
+                        important: false
                     }),
                     headers: {
                         'Accept': 'application/json',
@@ -49,7 +51,7 @@ const FormAddTask = ({ state, setState, setErrorValidation }) => {
                 const body = await res.json();
     
                 if (res.status === 201) {
-                    setState([body, ...state]);
+                    setUnFinishedTask([body, ...unFinishedTask]);
                     setTitle('');
                     setDescription('');  
                     setLoadingTask(false);

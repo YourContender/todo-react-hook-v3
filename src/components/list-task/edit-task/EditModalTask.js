@@ -6,7 +6,9 @@ import { API_PUT_URL }                from '../../../config';
 import preloader                      from '../../spinner/spinner.gif';
 import s                              from './EditModalTask.module.css';
 
-function EditModalTask({ state, item, setShowEditModal, editError, setEditError, successTaskChange, setSuccessTaskChange, taskDataChange }) {
+function EditModalTask({ 
+    allListTask, item, setShowEditModal, editError, successTaskChange, setSuccessTaskChange, taskDataChange 
+}) {
     const [editTitle, setEditTitle] = useState(item.title);
     const [editDescr, setEditDescr] = useState(item.description);
     const [loadingTask, setLoadingTask] = useState(false);
@@ -31,13 +33,15 @@ function EditModalTask({ state, item, setShowEditModal, editError, setEditError,
     const editTask = async () => {
         setLoadingTask(true);
 
-        let filtered = state.map(elem => {
+        let filtered = allListTask.map(elem => {
             if (elem.id === item.id) {
                 return {
                     id: item.id,
                     title: editTitle, 
                     description: editDescr,
-                    status: 1
+                    status: 1,
+                    done: item.done,
+                    important: false
                 }
             }
             return elem
@@ -47,7 +51,9 @@ function EditModalTask({ state, item, setShowEditModal, editError, setEditError,
             id: item.id,
             title: editTitle, 
             description: editDescr, 
-            status: 1
+            status: 1,
+            done: item.done,
+            important: false
         }
     
         const res = await fetch(API_PUT_URL + "/" + item.id, {
