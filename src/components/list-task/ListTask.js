@@ -2,13 +2,11 @@ import { useEffect, useState }      from "react";
 import FormAddTask                  from "./forms-add-task/FormAddTask";
 import { API_DEL_URL, API_GET_URL, API_PUT_URL } from "../../config";
 import Task                         from "./task/Task";
-import Error                        from "../error/Error";
 
 function ListTask({ showFormPanel }) {
     const [finishedTask, setFinishedTask] = useState([]);
     const [unFinishedTask, setUnFinishedTask] = useState([]);
     const [editError, setEditError] = useState(null);
-    const [errorValidation, setErrorValidation] = useState(false);
     const [successTaskChange, setSuccessTaskChange] = useState(false);
     const [allListTask, setAllListTask] = useState([]);
 
@@ -34,9 +32,7 @@ function ListTask({ showFormPanel }) {
         if (res.status === 200) {
             setUnFinishedTask(filtered.filter(item => item.done === false));
             setFinishedTask(filtered.filter(item => item.done === true));
-        } else { //404
-            setErrorValidation([res.status, res.statusText, id]);
-        }
+        } 
     }
 
     const taskDataChange = (filtered) => {
@@ -98,8 +94,6 @@ function ListTask({ showFormPanel }) {
                 <FormAddTask 
                     unFinishedTask={unFinishedTask}
                     setUnFinishedTask={setUnFinishedTask}
-                    errorValidation={errorValidation} 
-                    setErrorValidation={setErrorValidation} 
                 /> 
             : 
                 <div>
@@ -107,8 +101,6 @@ function ListTask({ showFormPanel }) {
                     <h4>List tasks: </h4>
                 </div>
             }
-
-            {errorValidation && <Error error={setErrorValidation} setError={errorValidation}/>}
 
             <ul>
                 {

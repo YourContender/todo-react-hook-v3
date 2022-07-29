@@ -3,33 +3,47 @@ import { Alert, Button, Form } from "react-bootstrap";
 import { API_POST_URL }        from "../../../config";
 import s                       from './FormAddTask.module.css';
 import preloader               from '../../spinner/spinner.gif';
+import AlertError from "../../error/AlertError";
 
-const FormAddTask = ({ unFinishedTask, setUnFinishedTask, setErrorValidation }) => {
+const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [loadingTask, setLoadingTask] = useState(false);
-    const [test, setTest] = useState(false);
+    const [validationTitle, setValidationTitle] = useState(false);
+    const [validationDescr, setValidationDescr] = useState(false);
 
     let classTitle = null;
     let classDescr = null;
 
-    if (test) {
-        classTitle = test ? classTitle = s.input : null
-        classDescr = test ? classDescr = s.input : null
+    if (validationTitle) {
+        classTitle = validationTitle ? classTitle = s.input : null
+    }
+
+    if (validationDescr) {
+        classDescr = validationDescr ? classDescr = s.input : null
     }
 
     const cancelAddNewTask = () => {
         setTitle('');
         setDescription('');
-        setErrorValidation(false);
-        setTest(false)
+        setValidationTitle(false);
+        setValidationDescr(false);
     } 
 
     const addNewTask = async () => {      
         setLoadingTask(true);
 
-        if (title.length < 4) {
-            setTest(true);
+        if (title.length < 4 && description.length < 4) {
+            setValidationDescr(true);
+            setValidationTitle(true);
+            setLoadingTask(false);
+        } else if(description.length < 4) {
+            setValidationDescr(true);
+            setValidationTitle(false);
+            setLoadingTask(false);
+        } else if(title.length < 4) {
+            setValidationTitle(true);
+            setValidationDescr(false)
             setLoadingTask(false);
         } else {
             try {
@@ -55,7 +69,8 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask, setErrorValidation }) 
                     setTitle('');
                     setDescription('');  
                     setLoadingTask(false);
-                    setErrorValidation(false); 
+                    setValidationTitle(false);
+                    setValidationDescr(false);
                 }
             } catch(err) {
                 console.log('hello hello', err);
@@ -77,11 +92,7 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask, setErrorValidation }) 
                     />
 
                     {
-                        test ? 
-                            <Alert className={s.error} variant="danger">
-                                <span>hello world</span>
-                            </Alert> 
-                        : null 
+                        validationTitle && <AlertError value={"danger"} textError={'enter more than 4 characters in title'}/>
                     }
 
                 </Form.Group>
@@ -98,11 +109,7 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask, setErrorValidation }) 
                     />
                    
                     {
-                        test ? 
-                            <Alert className={s.error} variant="danger">
-                                <span>hey hey</span> 
-                            </Alert> 
-                        : null 
+                        validationDescr && <AlertError value={"danger"} textError={'enter more than 4 characters in description'}/>
                     }
 
                 </Form.Group>
