@@ -1,9 +1,28 @@
-import { useState }            from "react";
-import { Alert, Button, Form } from "react-bootstrap";
-import { API_POST_URL }        from "../../../config";
-import s                       from './FormAddTask.module.css';
-import preloader               from '../../spinner/spinner.gif';
-import AlertError from "../../error/AlertError";
+import { useState }     from "react";
+import { useFormik }    from "formik";
+import { Button, Form } from "react-bootstrap";
+import { API_POST_URL } from "../../../config";
+import AlertError       from "../../error/AlertError";
+import preloader        from '../../spinner/spinner.gif';
+import s                from './FormAddTask.module.css';
+
+const validate = values => {
+    const errors = {};
+
+    if (!values.title) {
+        errors.title = 'required input'
+    } else if (values.title.length < 4) {
+        errors.title = 'the number of letters is less than four'
+    }
+
+    if (!values.description) {
+        errors.description = 'required input'
+    } else if (values.description.length < 4) {
+        errors.description = 'the number of letters is less than four'
+    }
+
+    return errors;
+}
 
 const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
     const [title, setTitle] = useState('');
@@ -11,6 +30,18 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
     const [loadingTask, setLoadingTask] = useState(false);
     const [validationTitle, setValidationTitle] = useState(false);
     const [validationDescr, setValidationDescr] = useState(false);
+
+    const formik = useFormik({
+        initialValues: {
+            title: '',
+            description: ''
+        },
+        onSubmit: values => {
+            setTitle(values.title)
+            setDescription(values.description)
+        },
+        validate
+    })  
 
     let classTitle = null;
     let classDescr = null;
@@ -30,22 +61,23 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
         setValidationDescr(false);
     } 
 
-    const addNewTask = async () => {      
+    const addNewTask = async () => {   
+        formik.handleSubmit();   
         setLoadingTask(true);
 
-        if (title.length < 4 && description.length < 4) {
-            setValidationDescr(true);
-            setValidationTitle(true);
-            setLoadingTask(false);
-        } else if(description.length < 4) {
-            setValidationDescr(true);
-            setValidationTitle(false);
-            setLoadingTask(false);
-        } else if(title.length < 4) {
-            setValidationTitle(true);
-            setValidationDescr(false)
-            setLoadingTask(false);
-        } else {
+        // if (title.length < 4 && description.length < 4) {
+        //     setValidationDescr(true);
+        //     setValidationTitle(true);
+        //     setLoadingTask(false);
+        // } else if(description.length < 4) {
+        //     setValidationDescr(true);
+        //     setValidationTitle(false);
+        //     setLoadingTask(false);
+        // } else if(title.length < 4) {
+        //     setValidationTitle(true);
+        //     setValidationDescr(false)
+        //     setLoadingTask(false);
+        // } else {
             try {
                 const res = await fetch(API_POST_URL, {
                     method: 'POST',
@@ -75,24 +107,27 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
             } catch(err) {
                 console.log('hello hello', err);
             }
-        }     
+        // }     
     }
 
     return (
         <div>
-            <Form>
+            <Form onSubmit={formik.handleSubmit}>
                 <Form.Group className="mb-3 mt-3">
                     <Form.Label>Enter title</Form.Label>
                     <Form.Control 
                         type="text" 
+                        name="title"
                         placeholder="введите заголовок" 
                         className={classTitle} 
-                        onChange={(e) => setTitle(e.target.value)} 
-                        value={title} 
+                        // onChange={(e) => setTitle(e.target.value)} 
+                        value={formik.values.title}
+                        onChange={formik.handleChange}
                     />
 
                     {
-                        validationTitle && <AlertError value={"danger"} textError={'enter more than 4 characters in title'}/>
+                        formik.errors.title && <AlertError value={"danger"} textError={formik.errors.title}/>
+                        // validationTitle && <AlertError value={"danger"} textError={'enter more than 4 characters in title'}/>
                     }
 
                 </Form.Group>
@@ -100,22 +135,31 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
                     <Form.Label>Enter description</Form.Label>
                     <Form.Control 
                         className={classDescr} 
-                        onChange={(e) => setDescription(e.target.value)} 
-                        value={description} 
+                        // onChange={(e) => setDescription(e.target.value)} 
                         name='description' 
+                        value={formik.values.description}
+                        onChange={formik.handleChange}
                         as="textarea" 
                         rows={2} 
                         placeholder="введите описание"
                     />
                    
                     {
-                        validationDescr && <AlertError value={"danger"} textError={'enter more than 4 characters in description'}/>
+                        formik.errors.description && <AlertError value={"danger"} textError={formik.errors.description}/>
+                        // validationDescr && <AlertError value={"danger"} textError={'enter more than 4 characters in description'}/>
                     }
 
                 </Form.Group>
             </Form>
             <div>
-                <Button className={s.btn} onClick={() => addNewTask()} variant="primary">create</Button>
+                <Button 
+                    className={s.btn} 
+                    onClick={() => addNewTask()} 
+                    // onClick={formik.handleSubmit}
+                    variant="primary"
+                >
+                    create
+                </Button>
                 <Button className={s.btn} onClick={() => cancelAddNewTask()} variant="outline-secondary">cancel</Button>
             </div>
            
