@@ -1,12 +1,12 @@
 import { useState }     from "react";
 import { useFormik }    from "formik";
-import { Button, Form } from "react-bootstrap";
-import { API_POST_URL } from "../../../config";
+import { Form }         from "react-bootstrap";
+import { API } from "../../../api";
 import * as Yup         from 'yup';
-import AlertError       from "../../error/AlertError";
 import preloader        from '../../spinner/spinner.gif';
 import s                from './FormAddTask.module.css';
 import ButtonComponent from "../../button/Button";
+import FormField from "../../forms/FormField";
 
 const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
     const [loadingTask, setLoadingTask] = useState(false);
@@ -26,9 +26,13 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
         })
     })  
 
-    const cancelAddNewTask = () => {
+    const resetValues = () => {
         formik.values.title = '';
         formik.values.description = '';
+    }
+
+    const cancelAddNewTask = () => {
+        resetValues();
         setLoadingTask(true);
         
         setTimeout(() => {
@@ -37,10 +41,10 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
     } 
 
     const addNewTask = async () => { 
-        if (formik.values.title.length > 4 && formik.values.description.length > 4) {
+        if (formik.values.title.length > 4 && formik.values.description.length > 4) {   // исправить
             setLoadingTask(true);
 
-            const res = await fetch(API_POST_URL, {
+            const res = await fetch(API, {
                 method: 'POST',
                 body: JSON.stringify({
                     title: formik.values.title,
@@ -59,8 +63,7 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
 
             if (res.status === 201) {
                 setUnFinishedTask([body, ...unFinishedTask]);
-                formik.values.title = '';
-                formik.values.description = '';
+                resetValues();
                 setLoadingTask(false);
             }
         }
@@ -69,50 +72,28 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
     return (
         <div>
             <Form onSubmit={formik.handleSubmit}>
+                <FormField 
+                    type="text"
+                    name="title"
+                    text="enter title"
+                    value={formik.values.title}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.errors.title}
+                    touched={formik.touched.title}
+                />
 
-                <Form.Group className="mb-3 mt-3">
-                    <Form.Label>Enter title</Form.Label>
-                    <Form.Control 
-                        type="text" 
-                        name="title"
-                        placeholder="введите заголовок" 
-                        value={formik.values.title}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                    />
-
-                    {
-                        (formik.errors.title && formik.touched.title) ? 
-                            <AlertError 
-                                value={"danger"} 
-                                textError={formik.errors.title}
-                            />
-                        : null
-                    }
-                </Form.Group>
-
-                <Form.Group className="mb-2">
-                    <Form.Label>Enter description</Form.Label>
-                    <Form.Control 
-                        rows={2} 
-                        as="textarea" 
-                        name='description' 
-                        placeholder="введите описание"
-                        value={formik.values.description}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                    />
-                   
-                    {
-                        (formik.errors.description && formik.touched.description) ?
-                            <AlertError 
-                                value={"danger"} 
-                                textError={formik.errors.description}
-                            /> 
-                        : null
-                    }
-                </Form.Group>
-            
+                <FormField 
+                    name="description"
+                    text="Enter description"
+                    rows={2}
+                    as="textarea"
+                    value={formik.values.description}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.errors.description}
+                    touched={formik.touched.description}
+                />
             </Form>
             <div>
                 <ButtonComponent 
@@ -129,9 +110,7 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
             </div>
            
             <div className={s.loading}>
-                {
-                    loadingTask && <img src={preloader} alt="preloader"/> 
-                }
+                { loadingTask && <img src={preloader} alt="preloader"/> }
             </div>
         
         </div>

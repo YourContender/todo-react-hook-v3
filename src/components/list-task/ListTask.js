@@ -1,6 +1,6 @@
 import { useEffect, useState }      from "react";
 import FormAddTask                  from "./forms-add-task/FormAddTask";
-import { API_DEL_URL, API_GET_URL, API_PUT_URL } from "../../config";
+import { API } from "../../api";
 import Task                         from "./task/Task";
 
 function ListTask({ showFormPanel }) {
@@ -11,7 +11,7 @@ function ListTask({ showFormPanel }) {
     const [allListTask, setAllListTask] = useState([]);
 
     useEffect( async () => {
-        const res = await fetch(API_GET_URL);
+        const res = await fetch(API);
         const body = await res.json();
         
         setUnFinishedTask(body.filter(item => item.done === false));
@@ -24,7 +24,7 @@ function ListTask({ showFormPanel }) {
 
         let filtered = state.filter(item => item.id !== id)
     
-        const res = await fetch(API_DEL_URL + '/' + id, {
+        const res = await fetch(`${API}/${id}`, {
             method: 'DELETE'
         })
 
@@ -72,7 +72,7 @@ function ListTask({ showFormPanel }) {
             important: elem.important
         }
 
-        const res = await fetch(API_PUT_URL + "/" + elem.id, {
+        const res = await fetch(API + "/" + elem.id, {
             method: 'PUT',
             body: JSON.stringify(data),
             headers: {

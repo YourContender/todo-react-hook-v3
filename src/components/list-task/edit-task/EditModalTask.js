@@ -2,7 +2,7 @@ import { useState }                   from 'react';
 import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon }            from "@fortawesome/react-fontawesome";
 import { faSave, faSquareXmark }      from '@fortawesome/free-solid-svg-icons';
-import { API_PUT_URL }                from '../../../config';
+import { API }                from '../../../api';
 import preloader                      from '../../spinner/spinner.gif';
 import s                              from './EditModalTask.module.css';
 
@@ -56,7 +56,7 @@ function EditModalTask({
             important: false
         }
     
-        const res = await fetch(API_PUT_URL + "/" + item.id, {
+        const res = await fetch(`${API}/${item.id}`, {
             method: 'PUT',
             body: JSON.stringify(data),
             headers: {
