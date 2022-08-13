@@ -6,6 +6,7 @@ import * as Yup         from 'yup';
 import AlertError       from "../../error/AlertError";
 import preloader        from '../../spinner/spinner.gif';
 import s                from './FormAddTask.module.css';
+import ButtonComponent from "../../button/Button";
 
 const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
     const [loadingTask, setLoadingTask] = useState(false);
@@ -36,9 +37,9 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
     } 
 
     const addNewTask = async () => { 
-        setLoadingTask(true);
+        if (formik.values.title.length > 4 && formik.values.description.length > 4) {
+            setLoadingTask(true);
 
-        try {
             const res = await fetch(API_POST_URL, {
                 method: 'POST',
                 body: JSON.stringify({
@@ -62,8 +63,6 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
                 formik.values.description = '';
                 setLoadingTask(false);
             }
-        } catch(err) {
-            console.log('hello hello', err);
         }
     }
 
@@ -116,21 +115,17 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
             
             </Form>
             <div>
-                <Button 
-                    className={s.btn} 
-                    onClick={() => addNewTask()} 
-                    variant="primary"
-                >
-                    create
-                </Button>
-
-                <Button 
-                    className={s.btn} 
-                    onClick={() => cancelAddNewTask()} 
-                    variant="outline-secondary"
-                >
-                    cancel
-                </Button>
+                <ButtonComponent 
+                    value="primary" 
+                    method={addNewTask} 
+                    textBtn="create"
+                />
+                
+                <ButtonComponent 
+                    value="outline-secondary" 
+                    method={cancelAddNewTask} 
+                    textBtn="cancel"
+                />
             </div>
            
             <div className={s.loading}>
