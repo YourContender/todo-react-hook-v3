@@ -1,6 +1,5 @@
 import { useState }     from "react";
 import { useFormik }    from "formik";
-import { Form }         from "react-bootstrap";
 import { API } from "../../../api";
 import * as Yup         from 'yup';
 import preloader        from '../../spinner/spinner.gif';
@@ -8,7 +7,7 @@ import s                from './FormAddTask.module.css';
 import ButtonComponent from "../../button/Button";
 import FormField from "../../forms/FormField";
 
-const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
+const FormAddTask = ({ unFinishedTask, setUnFinishedTask, setShowFormPanel }) => {
     const [loadingTask, setLoadingTask] = useState(false);
 
     const formik = useFormik({
@@ -65,36 +64,36 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
                 setUnFinishedTask([body, ...unFinishedTask]);
                 resetValues();
                 setLoadingTask(false);
+                setShowFormPanel(false);
             }
         }
     }
 
     return (
-        <div>
-            <Form onSubmit={formik.handleSubmit}>
-                <FormField 
-                    type="text"
-                    name="title"
-                    text="enter title"
-                    value={formik.values.title}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={formik.errors.title}
-                    touched={formik.touched.title}
-                />
+        <>
+            <FormField 
+                type="text"
+                name="title"
+                text="enter title"
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.errors.title}
+                touched={formik.touched.title}
+            />
 
-                <FormField 
-                    name="description"
-                    text="Enter description"
-                    rows={2}
-                    as="textarea"
-                    value={formik.values.description}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={formik.errors.description}
-                    touched={formik.touched.description}
-                />
-            </Form>
+            <FormField 
+                name="description"
+                text="Enter description"
+                rows={2}
+                as="textarea"
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.errors.description}
+                touched={formik.touched.description}
+            />
+            
             <div>
                 <ButtonComponent 
                     value="primary" 
@@ -113,7 +112,7 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask }) => {
                 { loadingTask && <img src={preloader} alt="preloader"/> }
             </div>
         
-        </div>
+        </>
     )
 }
 

@@ -10,7 +10,7 @@ function App() {
     return (
         <div className={s.container}>
             <Header showFormPanel={showFormPanel} setShowFormPanel={setShowFormPanel} />
-            <ListTask showFormPanel={showFormPanel}/>
+            <ListTask showFormPanel={showFormPanel} setShowFormPanel={setShowFormPanel}/>
             <Footer/>
         </div>
     )

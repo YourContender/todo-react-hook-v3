@@ -3,7 +3,7 @@ import FormAddTask                  from "./forms-add-task/FormAddTask";
 import { API } from "../../api";
 import Task                         from "./task/Task";
 
-function ListTask({ showFormPanel }) {
+function ListTask({ showFormPanel, setShowFormPanel }) {
     const [finishedTask, setFinishedTask] = useState([]);
     const [unFinishedTask, setUnFinishedTask] = useState([]);
     const [editError, setEditError] = useState(null);
@@ -94,6 +94,7 @@ function ListTask({ showFormPanel }) {
                 <FormAddTask 
                     unFinishedTask={unFinishedTask}
                     setUnFinishedTask={setUnFinishedTask}
+                    setShowFormPanel={setShowFormPanel}
                 /> 
             : 
                 <div>
