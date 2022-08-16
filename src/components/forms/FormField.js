@@ -1,35 +1,36 @@
-import { Form }         from "react-bootstrap";
+// import { Form }         from "react-bootstrap";
 import AlertError from "../error/AlertError";
+import { ErrorMessage, Field, Form } from "formik";
 
 const FormField = (props) => {
-    const {type, name, text, value, onChange, onBlur, error, touched, rows, as} = props;
+    const {type, name, text, error, touched, rows, as, id} = props;
+
+    console.log('props error alert: ', error);
 
     return (
-        <Form>
-            <Form.Group className="mb-3 mt-3">
-                <Form.Label>{text}</Form.Label>
-                
-                <Form.Control 
-                    type={type ? type : null} 
-                    rows={rows ? rows : null}
-                    as={as}
-                    name={name}
-                    placeholder={text} 
-                    value={value}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                />
+        <>
+            <p>{text}</p>
 
-                {
-                    (error && touched) ? 
-                        <AlertError 
-                            value={"danger"} 
-                            textError={error}
-                        />
-                    : null
-                }
-            </Form.Group>
-        </Form>
+            <Field
+                type={type ? type : null} 
+                rows={rows ? rows : null}
+                as={as}
+                name={name}
+                id={id}
+                placeholder={text} 
+            />
+
+            {
+                (error && touched) ? 
+                    // <AlertError 
+                    //     value={"danger"} 
+                    //     textError={error}
+                    // />
+                    <div>пиздец</div>
+                : null
+            }
+            {/* <ErrorMessage className='error' name='name' component='div'/> */}
+        </>
     )
 }
 

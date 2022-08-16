@@ -1,12 +1,13 @@
 import { Button } from "react-bootstrap";
 import s from './Button.module.css';
 
-function ButtonComponent({value, method, textBtn}) {
+function ButtonComponent({value, textBtn, disabled, type}) {
     return (
         <Button 
             className={s.btn} 
-            onClick={() => method()} 
             variant={value}
+            disabled={disabled}
+            type={type}
         >
             {textBtn}
         </Button>
