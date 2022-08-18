@@ -1,35 +1,20 @@
-// import { Form }         from "react-bootstrap";
-import AlertError from "../error/AlertError";
-import { ErrorMessage, Field, Form } from "formik";
+import { ErrorMessage, Field } from "formik";
+import s from './FormField.module.css';
 
-const FormField = (props) => {
-    const {type, name, text, error, touched, rows, as, id} = props;
-
-    console.log('props error alert: ', error);
-
+const FormField = ({ type, name, id }) => {
     return (
         <>
-            <p>{text}</p>
+            <div className={s.block}>
+                <span className="text">{`enter ${name}`}</span>
 
-            <Field
-                type={type ? type : null} 
-                rows={rows ? rows : null}
-                as={as}
-                name={name}
-                id={id}
-                placeholder={text} 
-            />
-
-            {
-                (error && touched) ? 
-                    // <AlertError 
-                    //     value={"danger"} 
-                    //     textError={error}
-                    // />
-                    <div>пиздец</div>
-                : null
-            }
-            {/* <ErrorMessage className='error' name='name' component='div'/> */}
+                <Field
+                    className={s.input}
+                    type={type} 
+                    name={name}
+                    id={id}
+                />
+            </div>
+            <ErrorMessage className={s.error} name={name} component='div'/>
         </>
     )
 }
