@@ -9,7 +9,7 @@ import {
 
 
 const Task = ({ 
-    removeTask, editTask, editError, setEditError, successTaskChange, setSuccessTaskChange, item, taskDataChange, editStateTask, allListTask
+    removeTask, editTask, editError, setEditError, successTaskChange, setSuccessTaskChange, item, taskDataChange, editStateTask, allListTask, openEditModal, setOpenEditModal
 }) => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [important, setImportant] = useState(false);
@@ -39,13 +39,14 @@ const Task = ({
                             <EditModalTask 
                                 item={item}
                                 editTask={editTask} 
-                                setShowEditModal={setShowEditModal} 
+                                setOpenEditModal={setOpenEditModal}
                                 editError={editError}
                                 setEditError={setEditError}
                                 successTaskChange={successTaskChange}
                                 setSuccessTaskChange={setSuccessTaskChange}
                                 taskDataChange={taskDataChange}
                                 allListTask={allListTask}
+                                setShowEditModal={setShowEditModal}
                             />
                         </div>
                     : 

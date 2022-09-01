@@ -1,44 +1,24 @@
+import { Formik, Form } from 'formik';
+import * as Yup         from 'yup';
 import { useState }                   from 'react';
-import { Alert, Button, Form, Modal } from 'react-bootstrap';
-import { FontAwesomeIcon }            from "@fortawesome/react-fontawesome";
-import { faSave, faSquareXmark }      from '@fortawesome/free-solid-svg-icons';
+import FormField from "../../forms/FormField";
 import { API }                from '../../../api';
 import preloader                      from '../../spinner/spinner.gif';
 import s                              from './EditModalTask.module.css';
+import ButtonComponent from '../../button/Button';
 
-function EditModalTask({ 
-    allListTask, item, setShowEditModal, editError, successTaskChange, setSuccessTaskChange, taskDataChange 
-}) {
-    const [editTitle, setEditTitle] = useState(item.title);
-    const [editDescr, setEditDescr] = useState(item.description);
+function EditModalTask({ allListTask, item, taskDataChange, setShowEditModal }) {
     const [loadingTask, setLoadingTask] = useState(false);
-    const [test, setTest] = useState(false);
-
-    let classTitle = null;
-    let classDescr = null;
-
-    if (test) {
-        classTitle = test ? classTitle = s.input : null
-        classDescr = test ? classDescr = s.input : null
-    } 
-
-    const editCurrentTask = () => {
-        if (editTitle.length < 4) {
-            return setTest(true);
-        } else {
-            return editTask()
-        }
-    }
     
-    const editTask = async () => {
+    const editTask = async (newTitle, newDescr) => {
         setLoadingTask(true);
 
         let filtered = allListTask.map(elem => {
             if (elem.id === item.id) {
                 return {
                     id: item.id,
-                    title: editTitle, 
-                    description: editDescr,
+                    title: newTitle, 
+                    description: newDescr,
                     status: 1,
                     done: item.done,
                     important: false
@@ -49,8 +29,8 @@ function EditModalTask({
     
         let data = {
             id: item.id,
-            title: editTitle, 
-            description: editDescr, 
+            title: newTitle, 
+            description: newDescr, 
             status: 1,
             done: item.done,
             important: false
@@ -60,105 +40,89 @@ function EditModalTask({
             method: 'PUT',
             body: JSON.stringify(data),
             headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             }
         })
         
         if (res.status === 200) {
             taskDataChange(filtered);
-            setTest(false);
-            setSuccessTaskChange(true);
             setLoadingTask(false);
+            setShowEditModal(false);
         } 
     }
 
-    const cancelEdit = () => {
-        setShowEditModal(false);
-        setTest(false);
-        setSuccessTaskChange(false);
-    }
-
     return (
-        <div className={s.container}>
-            <div className={s.edit}>
-                <Modal.Dialog>
-                <Modal.Header >
-                    <Modal.Title>Modal title</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
+        <Formik
+            initialValues = {{
+                title: '',
+                description: ''
+            }}
+            validationSchema = {Yup.object({
+                title: Yup.string()
+                        .min(4, 'the number of letters is less than four')
+                        .required('required input'),
+                description: Yup.string()
+                        .min(4, 'the number of letters is less than four')
+                        .required('required input')
+            })} 
+            onSubmit = {({ title, description }) => {
+                editTask(title, description)
+            }}
+        >
+            <div className={s.container}>
+                <div className={s.edit}>
+                    <div className={s.editTitle}>
+                        Edit modal task
+                    </div>
+                    
                     <Form>
-                        <Form.Group className="mb-3 mt-3">
-                            <Form.Label>Enter title</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                placeholder="введите заголовок" 
-                                defaultValue={item.title}
-                                className={classTitle}
-                                onChange={(e) => setEditTitle(e.target.value)}
+                        <FormField 
+                            type="text" 
+                            name="title"
+                            id="title"
+                            placeholder='enter your title'
+                            textTitle='edit '
+                        />
+
+                        <FormField 
+                            type="text" 
+                            name="description"
+                            id="description"
+                            placeholder='enter your description'
+                            textTitle='edit '
+                        />
+                    
+                        <div>
+                            <ButtonComponent 
+                                value="primary" 
+                                type="submit"
+                                textBtn="create"
+                            />
+                            
+                            <ButtonComponent 
+                                value="outline-secondary" 
+                                type="reset"
+                                textBtn="reset"
                             />
 
-                            {
-                                test ? 
-                                    <Alert className={s.error} variant="danger">
-                                        <span>error</span>
-                                    </Alert> 
-                                : null
-                            }
-
-                        </Form.Group>
-                        <Form.Group className="mb-2">
-                            <Form.Label>Enter description</Form.Label>
-                            <Form.Control 
-                                name='description' 
-                                as="textarea" 
-                                rows={2} 
-                                placeholder="введите описание"
-                                defaultValue={item.description}
-                                className={classDescr}
-                                onChange={(e) => setEditDescr(e.target.value)}
+                            <ButtonComponent
+                                func={setShowEditModal}
+                                value='danger'
+                                textBtn='&times;'
+                                style='close'
                             />
-
-                            {
-                                test ?
-                                    <Alert className={s.error} variant="danger">
-                                        <span>error</span>
-                                    </Alert> 
-                                : null 
-                            }
-
-                        </Form.Group>
-
-                        {
-                            Array.isArray(editError) && 
-                                <Alert className={s.error} variant="danger">
-                                    <span>{editError[0] + ' : ' + editError[1]}</span>
-                                </Alert> 
-                        }
-
-                        {
-                            successTaskChange && 
-                                <Alert className={s.success} variant="info">
-                                    <span>success</span>
-                                </Alert> 
-                        }
-
-                        <div className={s.loading}>
-                            {
-                                loadingTask && <img src={preloader} alt="preloader"/> 
-                            }
                         </div>
-
+                    
+                        <div className={s.loading}>
+                            { loadingTask && <img src={preloader} alt="preloader"/> }
+                        </div>
                     </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button onClick={() => cancelEdit()} variant="secondary"><FontAwesomeIcon icon={faSquareXmark}/></Button>
-                    <Button onClick={() => editCurrentTask()} variant="primary"><FontAwesomeIcon icon={faSave}/></Button>
-                </Modal.Footer>
-                </Modal.Dialog>
+                </div>
             </div>
-        </div>
+        </Formik>
     )   
 }
+{/* <FontAwesomeIcon icon={faSave}/> */}
 
 export default EditModalTask;

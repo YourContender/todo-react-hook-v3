@@ -4,6 +4,7 @@ import { API } from "../../api";
 import Task                         from "./task/Task";
 
 function ListTask({ showFormPanel, setShowFormPanel }) {
+    const [openEditModal, setOpenEditModal] = useState(false);
     const [finishedTask, setFinishedTask] = useState([]);
     const [unFinishedTask, setUnFinishedTask] = useState([]);
     const [editError, setEditError] = useState(null);
@@ -43,10 +44,6 @@ function ListTask({ showFormPanel, setShowFormPanel }) {
     }
 
     const editStateTask = async(elem) => {
-        console.log('id: ', elem.id);
-        console.log('done: ', elem.done);
-        console.log('important: ', elem.important);
-
         let state = [...unFinishedTask, ...finishedTask];
 
         let filtered = state.map(item => {
@@ -119,6 +116,8 @@ function ListTask({ showFormPanel, setShowFormPanel }) {
                                 setSuccessTaskChange={setSuccessTaskChange}
                                 taskDataChange={taskDataChange}
                                 editStateTask={editStateTask}
+                                openEditModal={openEditModal}
+                                setOpenEditModal={setOpenEditModal}
                             />
                         )
                     })
@@ -143,6 +142,8 @@ function ListTask({ showFormPanel, setShowFormPanel }) {
                                 setSuccessTaskChange={setSuccessTaskChange}
                                 taskDataChange={taskDataChange}
                                 editStateTask={editStateTask}
+                                openEditModal={openEditModal}
+                                setOpenEditModal={setOpenEditModal}
                             />
                         )
                     })

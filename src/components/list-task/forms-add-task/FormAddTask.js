@@ -1,5 +1,5 @@
 import { useState }     from "react";
-import { Formik, Form }    from "formik";
+import { Formik, Form } from "formik";
 import { API } from "../../../api";
 import * as Yup         from 'yup';
 import preloader        from '../../spinner/spinner.gif';
@@ -60,12 +60,14 @@ const FormAddTask = ({ unFinishedTask, setUnFinishedTask, setShowFormPanel }) =>
                     type="text" 
                     name="title"
                     id="title"
+                    textTitle='enter'
                 />
 
                 <FormField 
                     type="text" 
                     name="description"
                     id="description"
+                    textTitle='enter'
                 />
             
                 <div>
